@@ -2,9 +2,25 @@
 
 [English README](README.md)
 
-Android Icon Compliance Resizer は、既存のアイコン素材を Android ランチャーアイコン用リソースと Google Play Store 掲載用アイコンに整えるための Codex Skill / Python ツールキットです。
+1枚のアイコン画像から、Android ランチャー用リソース、Google Play Store 用画像、Adaptive Icon XML、見切れプレビュー、検証レポートを作るツールです。
 
-新しいアイコンデザインを作るツールではありません。渡された素材をできるだけ保ったまま、リサイズ、中央寄せ、余白調整、Adaptive Icon XML 生成、プレビュー生成、見切れリスク検証を行います。
+アプリアイコンの最後の面倒な作業を助けます。素材としては良く見えるのに、Android のホーム画面で丸く切り抜かれると見切れる、Google Play 用アイコンだけ別に必要になる、そういう地味だけど品質に効く部分をまとめて確認できます。
+
+<p>
+  <img src="docs/images/mieru-play-store-icon.png" alt="Generated Play Store icon" width="150">
+  <img src="docs/images/mieru-preview-circle.png" alt="Circle preview" width="150">
+  <img src="docs/images/mieru-preview-rounded-square.png" alt="Rounded square preview" width="150">
+  <img src="docs/images/mieru-preview-squircle.png" alt="Squircle preview" width="150">
+  <img src="docs/images/mieru-preview-safe-zone.png" alt="Safe zone preview" width="150">
+</p>
+
+## なぜ使うのか
+
+- 正方形では良く見えるのに、実機のホーム画面で見切れる問題を避けやすくなります。
+- 同じ素材から Google Play 用アイコンと Android ランチャー用アイコンを作れます。
+- circle、rounded-square、squircle、square、安全領域のプレビューをリリース前に確認できます。
+- `--dry-run` と `--backup` により、置き換え前に確認しやすく、戻しやすいです。
+- Codex Skill としても、単体の Python ツールとしても使えます。
 
 ## どんな素材を用意すればよいか
 
@@ -59,107 +75,13 @@ Create only the background layer for an Android adaptive icon: square 1024x1024,
 
 生成後は、このツールを実行する前に画像を目視確認してください。主役が端に近すぎる、小さな文字が読めない、すでに角丸が入っている、といった場合は、プロンプトを直して再生成するか、画像編集ツールで調整してから使います。
 
-## できること
-
-- `512x512` の Google Play Store 用 PNG を生成します。
-- Android Adaptive Icon の foreground / background レイヤーを生成します。
-- `mipmap-anydpi-v26` 用の Adaptive Icon XML を生成します。
-- 必要に応じて従来の density 別 PNG を生成します。
-- round icon XML とプレビューを生成できます。
-- 透明ピクセルを除いた前景 bounds を検出し、重要なピクセルを Android Adaptive Icon の安全領域内に収めます。
-- circle、rounded-square、squircle、square、安全領域オーバーレイのプレビューを生成します。
-- Play アイコン形式、Adaptive Icon XML、参照 drawable、legacy サイズ、manifest 参照、見切れリスクを検証します。
-
-## 必要なもの
-
-- Python 3.9 以上
-- Pillow
+## クイックスタート
 
 依存関係のインストール:
 
 ```bash
 python -m pip install -r requirements.txt
 ```
-
-## 初心者向け: 実際の画像を見ながら試す
-
-この例では、このリポジトリに入っている Mieru アプリのアイコン素材を使います。入力画像、生成される Google Play 用アイコン、Android ランチャーでの見え方を順番に確認できます。
-
-### 1. まずは1枚のアイコン画像から始める
-
-元になるアイコン素材です:
-
-![Mieru source icon](docs/images/mieru-source.png)
-
-手元に PNG が1枚だけある場合は `--source` を使います。Google Play 用アイコンと、Android ランチャー用の保守的な候補を作れます。
-
-```bash
-python scripts/pack_android_icons.py \
-  --project-root /path/to/android-project \
-  --source docs/images/mieru-source.png \
-  --name ic_launcher \
-  --legacy \
-  --adaptive \
-  --round \
-  --preview \
-  --dry-run
-```
-
-`--dry-run` は「実際には書き込まず、何が作られるかだけ確認する」という意味です。初心者はまずこれを実行してください。
-
-### 2. 可能なら foreground と background を分ける
-
-Android Adaptive Icon は、前景と背景が分かれているほうがきれいに作れます。
-
-| Foreground | Background |
-| --- | --- |
-| ![Mieru foreground](docs/images/mieru-foreground.png) | ![Mieru background](docs/images/mieru-background.png) |
-
-実際にアイコンリソースを生成するコマンドです:
-
-```bash
-python scripts/pack_android_icons.py \
-  --project-root /path/to/android-project \
-  --foreground docs/images/mieru-foreground.png \
-  --background docs/images/mieru-background.png \
-  --name ic_launcher \
-  --legacy \
-  --adaptive \
-  --round \
-  --preview \
-  --backup
-```
-
-`--backup` は、既存のアイコンファイルを置き換える前にバックアップを残す指定です。
-
-### 3. 作られたアイコンを見る
-
-Google Play Store 用アイコンは `512x512` の正方形 PNG です:
-
-![Generated Play Store icon](docs/images/mieru-play-store-icon.png)
-
-Android のホーム画面では、端末やランチャーによってアイコンが丸、角丸、squircle などに切り抜かれます。下のプレビューで見切れないか確認します。
-
-| Circle | Rounded square | Squircle | Safe zone |
-| --- | --- | --- | --- |
-| ![Circle preview](docs/images/mieru-preview-circle.png) | ![Rounded square preview](docs/images/mieru-preview-rounded-square.png) | ![Squircle preview](docs/images/mieru-preview-squircle.png) | ![Safe zone preview](docs/images/mieru-preview-safe-zone.png) |
-
-重要なロゴや文字が赤い安全領域ガイドに近すぎる、または circle preview で消えている場合は、元画像の余白を増やすか、foreground 画像を調整してください。
-
-### 4. リリース前に検証する
-
-アイコン生成後は、次のコマンドで検証します:
-
-```bash
-python scripts/validate_android_icons.py \
-  --project-root /path/to/android-project \
-  --name ic_launcher \
-  --strict
-```
-
-警告が出た場合は、Google Play にアップロードしたりアプリを公開したりする前に内容を確認してください。
-
-## クイックスタート
 
 まず dry-run で変更予定を確認します:
 
@@ -197,6 +119,100 @@ python scripts/validate_android_icons.py \
   --name ic_launcher \
   --strict
 ```
+
+## 作られるもの
+
+- `512x512` の Google Play Store 用 PNG を生成します。
+- Android Adaptive Icon の foreground / background レイヤーを生成します。
+- `mipmap-anydpi-v26` 用の Adaptive Icon XML を生成します。
+- 必要に応じて従来の density 別 PNG を生成します。
+- round icon XML とプレビューを生成できます。
+- 透明ピクセルを除いた前景 bounds を検出し、重要なピクセルを Android Adaptive Icon の安全領域内に収めます。
+- circle、rounded-square、squircle、square、安全領域オーバーレイのプレビューを生成します。
+- Play アイコン形式、Adaptive Icon XML、参照 drawable、legacy サイズ、manifest 参照、見切れリスクを検証します。
+
+## 必要なもの
+
+- Python 3.9 以上
+- Pillow
+
+## 初心者向け: 実際の画像を見ながら試す
+
+この例では、このリポジトリに入っている Mieru アプリのアイコン素材を使います。入力画像、生成される Google Play 用アイコン、Android ランチャーでの見え方を順番に確認できます。
+
+### 1. まずは1枚のアイコン画像から始める
+
+元になるアイコン素材です:
+
+<img src="docs/images/mieru-source.png" alt="Mieru source icon" width="220">
+
+手元に PNG が1枚だけある場合は `--source` を使います。Google Play 用アイコンと、Android ランチャー用の保守的な候補を作れます。
+
+```bash
+python scripts/pack_android_icons.py \
+  --project-root /path/to/android-project \
+  --source docs/images/mieru-source.png \
+  --name ic_launcher \
+  --legacy \
+  --adaptive \
+  --round \
+  --preview \
+  --dry-run
+```
+
+`--dry-run` は「実際には書き込まず、何が作られるかだけ確認する」という意味です。初心者はまずこれを実行してください。
+
+### 2. 可能なら foreground と background を分ける
+
+Android Adaptive Icon は、前景と背景が分かれているほうがきれいに作れます。
+
+| Foreground | Background |
+| --- | --- |
+| <img src="docs/images/mieru-foreground.png" alt="Mieru foreground" width="180"> | <img src="docs/images/mieru-background.png" alt="Mieru background" width="180"> |
+
+実際にアイコンリソースを生成するコマンドです:
+
+```bash
+python scripts/pack_android_icons.py \
+  --project-root /path/to/android-project \
+  --foreground docs/images/mieru-foreground.png \
+  --background docs/images/mieru-background.png \
+  --name ic_launcher \
+  --legacy \
+  --adaptive \
+  --round \
+  --preview \
+  --backup
+```
+
+`--backup` は、既存のアイコンファイルを置き換える前にバックアップを残す指定です。
+
+### 3. 作られたアイコンを見る
+
+Google Play Store 用アイコンは `512x512` の正方形 PNG です:
+
+<img src="docs/images/mieru-play-store-icon.png" alt="Generated Play Store icon" width="220">
+
+Android のホーム画面では、端末やランチャーによってアイコンが丸、角丸、squircle などに切り抜かれます。下のプレビューで見切れないか確認します。
+
+| Circle | Rounded square | Squircle | Safe zone |
+| --- | --- | --- | --- |
+| <img src="docs/images/mieru-preview-circle.png" alt="Circle preview" width="140"> | <img src="docs/images/mieru-preview-rounded-square.png" alt="Rounded square preview" width="140"> | <img src="docs/images/mieru-preview-squircle.png" alt="Squircle preview" width="140"> | <img src="docs/images/mieru-preview-safe-zone.png" alt="Safe zone preview" width="140"> |
+
+重要なロゴや文字が赤い安全領域ガイドに近すぎる、または circle preview で消えている場合は、元画像の余白を増やすか、foreground 画像を調整してください。
+
+### 4. リリース前に検証する
+
+アイコン生成後は、次のコマンドで検証します:
+
+```bash
+python scripts/validate_android_icons.py \
+  --project-root /path/to/android-project \
+  --name ic_launcher \
+  --strict
+```
+
+警告が出た場合は、Google Play にアップロードしたりアプリを公開したりする前に内容を確認してください。
 
 ## より良い Adaptive Icon を作るには
 
