@@ -44,6 +44,84 @@ Install dependencies:
 python -m pip install -r requirements.txt
 ```
 
+## Beginner Walkthrough With Real Images
+
+This example uses the Mieru app icon assets included in this repository. You can compare the input artwork with the generated app-store icon and launcher-mask previews before trying the tool on your own app.
+
+### 1. Start From One Icon Image
+
+This is the source artwork:
+
+![Mieru source icon](docs/images/mieru-source.png)
+
+If you only have one PNG, use `--source`. The tool can still create a Play Store icon and a conservative Android launcher candidate.
+
+```bash
+python scripts/pack_android_icons.py \
+  --project-root /path/to/android-project \
+  --source docs/images/mieru-source.png \
+  --name ic_launcher \
+  --legacy \
+  --adaptive \
+  --round \
+  --preview \
+  --dry-run
+```
+
+`--dry-run` means "show what would be created, but do not write files yet." Beginners should run this first.
+
+### 2. Use Separate Layers When You Have Them
+
+Adaptive icons work better when the foreground and background are separate.
+
+| Foreground | Background |
+| --- | --- |
+| ![Mieru foreground](docs/images/mieru-foreground.png) | ![Mieru background](docs/images/mieru-background.png) |
+
+Generate the icon resources:
+
+```bash
+python scripts/pack_android_icons.py \
+  --project-root /path/to/android-project \
+  --foreground docs/images/mieru-foreground.png \
+  --background docs/images/mieru-background.png \
+  --name ic_launcher \
+  --legacy \
+  --adaptive \
+  --round \
+  --preview \
+  --backup
+```
+
+`--backup` keeps a backup before replacing existing icon files.
+
+### 3. Check What Was Created
+
+The Google Play Store icon is a square `512x512` PNG:
+
+![Generated Play Store icon](docs/images/mieru-play-store-icon.png)
+
+Android launchers crop adaptive icons into different shapes depending on the device. These previews show how the same icon can look:
+
+| Circle | Rounded square | Squircle | Safe zone |
+| --- | --- | --- | --- |
+| ![Circle preview](docs/images/mieru-preview-circle.png) | ![Rounded square preview](docs/images/mieru-preview-rounded-square.png) | ![Squircle preview](docs/images/mieru-preview-squircle.png) | ![Safe zone preview](docs/images/mieru-preview-safe-zone.png) |
+
+If important parts of the icon touch the red safe-zone guide or disappear in the circle preview, adjust the source artwork or provide a foreground layer with more padding.
+
+### 4. Validate Before Release
+
+After generating icons, run:
+
+```bash
+python scripts/validate_android_icons.py \
+  --project-root /path/to/android-project \
+  --name ic_launcher \
+  --strict
+```
+
+If validation reports warnings, read them before uploading to Google Play or shipping the app.
+
 ## Quick Start
 
 Run a dry run first:
@@ -123,4 +201,3 @@ android, adaptive-icons, launcher-icon, google-play, python, pillow, codex-skill
 - Android adaptive icon foreground content should stay inside the central safe zone.
 - Always review generated previews visually before shipping.
 - Run with `--dry-run` before writing to an app project.
-

@@ -44,6 +44,84 @@ android-icon-compliance-resizer/
 python -m pip install -r requirements.txt
 ```
 
+## 初心者向け: 実際の画像を見ながら試す
+
+この例では、このリポジトリに入っている Mieru アプリのアイコン素材を使います。入力画像、生成される Google Play 用アイコン、Android ランチャーでの見え方を順番に確認できます。
+
+### 1. まずは1枚のアイコン画像から始める
+
+元になるアイコン素材です:
+
+![Mieru source icon](docs/images/mieru-source.png)
+
+手元に PNG が1枚だけある場合は `--source` を使います。Google Play 用アイコンと、Android ランチャー用の保守的な候補を作れます。
+
+```bash
+python scripts/pack_android_icons.py \
+  --project-root /path/to/android-project \
+  --source docs/images/mieru-source.png \
+  --name ic_launcher \
+  --legacy \
+  --adaptive \
+  --round \
+  --preview \
+  --dry-run
+```
+
+`--dry-run` は「実際には書き込まず、何が作られるかだけ確認する」という意味です。初心者はまずこれを実行してください。
+
+### 2. 可能なら foreground と background を分ける
+
+Android Adaptive Icon は、前景と背景が分かれているほうがきれいに作れます。
+
+| Foreground | Background |
+| --- | --- |
+| ![Mieru foreground](docs/images/mieru-foreground.png) | ![Mieru background](docs/images/mieru-background.png) |
+
+実際にアイコンリソースを生成するコマンドです:
+
+```bash
+python scripts/pack_android_icons.py \
+  --project-root /path/to/android-project \
+  --foreground docs/images/mieru-foreground.png \
+  --background docs/images/mieru-background.png \
+  --name ic_launcher \
+  --legacy \
+  --adaptive \
+  --round \
+  --preview \
+  --backup
+```
+
+`--backup` は、既存のアイコンファイルを置き換える前にバックアップを残す指定です。
+
+### 3. 作られたアイコンを見る
+
+Google Play Store 用アイコンは `512x512` の正方形 PNG です:
+
+![Generated Play Store icon](docs/images/mieru-play-store-icon.png)
+
+Android のホーム画面では、端末やランチャーによってアイコンが丸、角丸、squircle などに切り抜かれます。下のプレビューで見切れないか確認します。
+
+| Circle | Rounded square | Squircle | Safe zone |
+| --- | --- | --- | --- |
+| ![Circle preview](docs/images/mieru-preview-circle.png) | ![Rounded square preview](docs/images/mieru-preview-rounded-square.png) | ![Squircle preview](docs/images/mieru-preview-squircle.png) | ![Safe zone preview](docs/images/mieru-preview-safe-zone.png) |
+
+重要なロゴや文字が赤い安全領域ガイドに近すぎる、または circle preview で消えている場合は、元画像の余白を増やすか、foreground 画像を調整してください。
+
+### 4. リリース前に検証する
+
+アイコン生成後は、次のコマンドで検証します:
+
+```bash
+python scripts/validate_android_icons.py \
+  --project-root /path/to/android-project \
+  --name ic_launcher \
+  --strict
+```
+
+警告が出た場合は、Google Play にアップロードしたりアプリを公開したりする前に内容を確認してください。
+
 ## クイックスタート
 
 まず dry-run で変更予定を確認します:
@@ -129,4 +207,3 @@ android, adaptive-icons, launcher-icon, google-play, python, pillow, codex-skill
 - Android Adaptive Icon の foreground の重要部分は中央の安全領域内に収める必要があります。
 - 実際のリリース前に、生成されたプレビューを必ず目視確認してください。
 - アプリプロジェクトへ書き込む前に、まず `--dry-run` を使ってください。
-
