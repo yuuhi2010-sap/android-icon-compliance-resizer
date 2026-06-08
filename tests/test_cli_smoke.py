@@ -4,6 +4,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import json
 from pathlib import Path
 
 try:
@@ -24,7 +25,12 @@ class CliSmokeTest(unittest.TestCase):
             main_dir = project_root / "app" / "src" / "main"
             main_dir.mkdir(parents=True)
             (main_dir / "AndroidManifest.xml").write_text(
-                '<manifest xmlns:android="http://schemas.android.com/apk/res/android" />',
+                (
+                    '<manifest xmlns:android="http://schemas.android.com/apk/res/android">'
+                    '<application android:icon="@mipmap/ic_launcher_test" '
+                    'android:roundIcon="@mipmap/ic_launcher_test_round" />'
+                    "</manifest>"
+                ),
                 encoding="utf-8",
             )
 
@@ -53,7 +59,8 @@ class CliSmokeTest(unittest.TestCase):
                 "--json",
             )
             self.assertEqual(validate_result.returncode, 0, validate_result.stdout + validate_result.stderr)
-            self.assertIn("adaptive icon XML found", validate_result.stdout)
+            findings = json.loads(validate_result.stdout)
+            self.assertFalse([item for item in findings if item["level"] == "error"])
 
             preview_dir = project_root / "build" / "icon-previews"
             self.assertTrue((preview_dir / "ic_launcher_test_circle.png").is_file())
