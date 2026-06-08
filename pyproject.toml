@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "android-icon-compliance-resizer"
+version = "0.1.0"
+description = "Resize, preview, and validate Android launcher icons and Google Play Store icons."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [
+  { name = "android-icon-compliance-resizer contributors" }
+]
+keywords = ["android", "adaptive-icons", "launcher-icon", "google-play", "codex-skill"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Software Development :: Build Tools",
+]
+dependencies = [
+  "Pillow>=10.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yuuhi2010-sap/android-icon-compliance-resizer"
+Repository = "https://github.com/yuuhi2010-sap/android-icon-compliance-resizer"
+Issues = "https://github.com/yuuhi2010-sap/android-icon-compliance-resizer/issues"
+
+[project.scripts]
+android-icon-pack = "scripts.pack_android_icons:main"
+android-icon-validate = "scripts.validate_android_icons:main"
+android-icon-previews = "scripts.generate_icon_previews:main"
+
+[tool.setuptools]
+packages = ["scripts"]

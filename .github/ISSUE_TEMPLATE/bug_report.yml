@@ -1,0 +1,44 @@
+name: Bug report
+description: Report a packing, preview, or validation problem.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What went wrong?
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: Paste the command you ran.
+      render: shell
+    validations:
+      required: true
+  - type: dropdown
+    id: project_type
+    attributes:
+      label: Project type
+      options:
+        - Native Android
+        - Flutter
+        - React Native
+        - Expo
+        - Capacitor
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Paste warnings, errors, or validation output.
+      render: text
+  - type: textarea
+    id: assets
+    attributes:
+      label: Artwork and previews
+      description: If possible, attach source artwork and generated preview images.

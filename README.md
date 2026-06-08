@@ -77,16 +77,24 @@ After generating artwork, inspect it before running this tool. If the subject to
 
 ## Quick Start
 
-Install dependencies:
+Install from GitHub:
 
 ```bash
+python -m pip install git+https://github.com/yuuhi2010-sap/android-icon-compliance-resizer.git
+```
+
+Or clone the repository and install dependencies:
+
+```bash
+git clone https://github.com/yuuhi2010-sap/android-icon-compliance-resizer.git
+cd android-icon-compliance-resizer
 python -m pip install -r requirements.txt
 ```
 
 Run a dry run first:
 
 ```bash
-python scripts/pack_android_icons.py \
+android-icon-pack \
   --project-root /path/to/android-project \
   --source /path/to/icon.png \
   --name ic_launcher \
@@ -100,7 +108,7 @@ python scripts/pack_android_icons.py \
 Generate files with backups:
 
 ```bash
-python scripts/pack_android_icons.py \
+android-icon-pack \
   --project-root /path/to/android-project \
   --source /path/to/icon.png \
   --name ic_launcher \
@@ -114,7 +122,7 @@ python scripts/pack_android_icons.py \
 Validate generated resources:
 
 ```bash
-python scripts/validate_android_icons.py \
+android-icon-validate \
   --project-root /path/to/android-project \
   --name ic_launcher \
   --strict
@@ -135,6 +143,8 @@ python scripts/validate_android_icons.py \
 
 - Python 3.9 or newer
 - Pillow
+
+If you are working from a source checkout without installing the package, replace `android-icon-pack` with `python scripts/pack_android_icons.py` and `android-icon-validate` with `python scripts/validate_android_icons.py`.
 
 ## Beginner Walkthrough With Real Images
 
@@ -256,3 +266,7 @@ android-icon-compliance-resizer/
 └── examples/
     └── README.md
 ```
+
+## Contributing
+
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for local development, test commands, and useful first contributions.

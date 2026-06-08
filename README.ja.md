@@ -77,16 +77,24 @@ Create only the background layer for an Android adaptive icon: square 1024x1024,
 
 ## クイックスタート
 
-依存関係のインストール:
+GitHub からインストール:
 
 ```bash
+python -m pip install git+https://github.com/yuuhi2010-sap/android-icon-compliance-resizer.git
+```
+
+または、リポジトリを clone して依存関係をインストールします:
+
+```bash
+git clone https://github.com/yuuhi2010-sap/android-icon-compliance-resizer.git
+cd android-icon-compliance-resizer
 python -m pip install -r requirements.txt
 ```
 
 まず dry-run で変更予定を確認します:
 
 ```bash
-python scripts/pack_android_icons.py \
+android-icon-pack \
   --project-root /path/to/android-project \
   --source /path/to/icon.png \
   --name ic_launcher \
@@ -100,7 +108,7 @@ python scripts/pack_android_icons.py \
 バックアップ付きで生成します:
 
 ```bash
-python scripts/pack_android_icons.py \
+android-icon-pack \
   --project-root /path/to/android-project \
   --source /path/to/icon.png \
   --name ic_launcher \
@@ -114,7 +122,7 @@ python scripts/pack_android_icons.py \
 生成済みリソースを検証します:
 
 ```bash
-python scripts/validate_android_icons.py \
+android-icon-validate \
   --project-root /path/to/android-project \
   --name ic_launcher \
   --strict
@@ -135,6 +143,8 @@ python scripts/validate_android_icons.py \
 
 - Python 3.9 以上
 - Pillow
+
+パッケージとしてインストールせず、リポジトリを直接使う場合は、`android-icon-pack` を `python scripts/pack_android_icons.py` に、`android-icon-validate` を `python scripts/validate_android_icons.py` に置き換えてください。
 
 ## 初心者向け: 実際の画像を見ながら試す
 
@@ -256,3 +266,7 @@ android-icon-compliance-resizer/
 └── examples/
     └── README.md
 ```
+
+## コントリビュート
+
+Issue や pull request を歓迎します。ローカル開発、テストコマンド、取り組みやすい改善案は [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
