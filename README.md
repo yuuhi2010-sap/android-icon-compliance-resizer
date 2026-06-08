@@ -6,6 +6,59 @@ Android Icon Compliance Resizer is a Codex Skill and script toolkit for converti
 
 It does not create a new icon design. Instead, it preserves supplied artwork as much as possible while resizing, centering, padding, generating adaptive icon XML, producing previews, and checking for cropping risk.
 
+## What Artwork Should I Prepare?
+
+The easiest starting point is a large square PNG, ideally `1024x1024` or larger. Put the main symbol, logo, letter, or character in the center and leave visible padding around it. Avoid placing important details near the edges because Android launchers may crop the icon into a circle or rounded shape.
+
+For the best Android adaptive icon result, prepare these files:
+
+- `foreground.png`: the main logo or symbol on a transparent background.
+- `background.png`: a full square background image, gradient, solid color, or simple pattern.
+- `monochrome.png`: an optional single-color version for themed icons on supported Android launchers.
+
+If you are new to app icon production, the simplest workflow is:
+
+1. Create or export one square icon image from a design tool such as Figma, Canva, Adobe Express, Illustrator, Photoshop, Affinity Designer, or Inkscape.
+2. Keep the icon simple: one clear subject, high contrast, no tiny text, and generous padding.
+3. Export a PNG at `1024x1024` or `512x512`.
+4. If your design tool supports layers, export the main symbol separately as a transparent `foreground.png` and the background separately as `background.png`.
+5. Run this tool with `--dry-run`, then generate previews and check circle cropping before using the icon in a release.
+
+If you only have one PNG, that is still fine. Use `--source`. This tool can create a Play Store icon and a conservative launcher icon candidate, but a single flat image cannot reliably separate the foreground from the background.
+
+### Tips for AI-Generated Artwork
+
+If you use an image generation tool, ask for icon-ready artwork instead of a full app icon mockup. The goal is to get clean source material that this tool can resize and validate.
+
+Useful prompt hints:
+
+- Ask for a centered subject on a square canvas.
+- Ask for generous empty space around the subject.
+- Ask for a simple, high-contrast shape that remains readable at small sizes.
+- Avoid tiny text, complex scenes, thin outlines, busy backgrounds, shadows near the edge, and fake rounded app-icon frames.
+- Ask for a transparent background if you want a `foreground.png`.
+- Ask for a separate simple background image if your tool can generate or export layers.
+
+Example prompt for a single PNG:
+
+```text
+Create a square 1024x1024 app icon source image for a magnifying glass camera app. Center one clear magnifying glass symbol, leave generous padding on all sides, use high contrast, simple shapes, no text, no rounded-corner frame, no drop shadow outside the artwork.
+```
+
+Example prompt for a foreground layer:
+
+```text
+Create only the foreground symbol for an Android adaptive icon: a centered magnifying glass with a small camera detail, transparent background, simple high-contrast vector-like style, generous padding, no text, no shadow, no background.
+```
+
+Example prompt for a background layer:
+
+```text
+Create only the background layer for an Android adaptive icon: square 1024x1024, calm blue-green gradient, subtle soft texture, no logo, no text, no border, no rounded corners.
+```
+
+After generating artwork, inspect it before running this tool. If the subject touches the edge, contains unreadable tiny text, or already includes rounded corners, regenerate or edit it first.
+
 ## What It Does
 
 - Generates a `512x512` Google Play Store icon PNG.
@@ -16,22 +69,6 @@ It does not create a new icon design. Instead, it preserves supplied artwork as 
 - Detects non-transparent foreground bounds and fits important pixels into the Android adaptive icon safe zone.
 - Renders mask previews for circle, rounded-square, squircle, square, and safe-zone overlay review.
 - Validates Play icon format, adaptive XML, drawable references, legacy sizes, manifest references, and crop-risk metrics.
-
-## Included Files
-
-```text
-android-icon-compliance-resizer/
-├── SKILL.md
-├── requirements.txt
-├── scripts/
-│   ├── pack_android_icons.py
-│   ├── validate_android_icons.py
-│   └── generate_icon_previews.py
-├── references/
-│   └── android_icon_requirements.md
-└── examples/
-    └── README.md
-```
 
 ## Requirements
 
@@ -180,20 +217,6 @@ python scripts/pack_android_icons.py \
 
 A single flat PNG can be used, but it cannot reliably separate the logo from the background. In that case, treat the adaptive icon output as a conservative candidate and inspect the generated previews before release.
 
-## Repository Description
-
-Short description for GitHub:
-
-```text
-Codex Skill and Python toolkit for resizing, packing, previewing, and validating Android launcher icons and Google Play Store icons.
-```
-
-Suggested topics:
-
-```text
-android, adaptive-icons, launcher-icon, google-play, python, pillow, codex-skill
-```
-
 ## Notes
 
 - Google Play Store icons and Android launcher icons are separate assets.
@@ -201,3 +224,19 @@ android, adaptive-icons, launcher-icon, google-play, python, pillow, codex-skill
 - Android adaptive icon foreground content should stay inside the central safe zone.
 - Always review generated previews visually before shipping.
 - Run with `--dry-run` before writing to an app project.
+
+## Project Structure
+
+```text
+android-icon-compliance-resizer/
+├── SKILL.md
+├── requirements.txt
+├── scripts/
+│   ├── pack_android_icons.py
+│   ├── validate_android_icons.py
+│   └── generate_icon_previews.py
+├── references/
+│   └── android_icon_requirements.md
+└── examples/
+    └── README.md
+```

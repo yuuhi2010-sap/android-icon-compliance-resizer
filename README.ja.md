@@ -6,6 +6,59 @@ Android Icon Compliance Resizer は、既存のアイコン素材を Android ラ
 
 新しいアイコンデザインを作るツールではありません。渡された素材をできるだけ保ったまま、リサイズ、中央寄せ、余白調整、Adaptive Icon XML 生成、プレビュー生成、見切れリスク検証を行います。
 
+## どんな素材を用意すればよいか
+
+いちばん簡単なのは、大きめの正方形 PNG を1枚用意することです。できれば `1024x1024` 以上、最低でも `512x512` をおすすめします。ロゴ、文字、キャラクター、記号などの主役は中央に置き、周囲にしっかり余白を残してください。Android のホーム画面では丸や角丸に切り抜かれることがあるため、端の近くに大事な部分を置くと見切れやすくなります。
+
+Android Adaptive Icon としてきれいに作るなら、次の素材を分けて用意するのが理想です。
+
+- `foreground.png`: 透明背景のロゴ、記号、文字、キャラクターなど主役部分
+- `background.png`: 背景の単色、グラデーション、模様、画像
+- `monochrome.png`: 任意。Android のテーマアイコン用の単色版
+
+アプリ制作やアイコン制作に慣れていない場合は、次の流れが簡単です。
+
+1. Figma、Canva、Adobe Express、Illustrator、Photoshop、Affinity Designer、Inkscape などで正方形のアイコン画像を作ります。
+2. デザインはシンプルにします。主役は1つ、コントラストは強め、小さな文字は避け、余白を多めにします。
+3. `1024x1024` または `512x512` の PNG として書き出します。
+4. レイヤーを分けられる場合は、主役だけを透明背景の `foreground.png`、背景だけを `background.png` として書き出します。
+5. このツールでまず `--dry-run` を実行し、その後プレビュー画像で丸く切り抜かれても見切れないか確認します。
+
+PNG が1枚しかなくても大丈夫です。その場合は `--source` を使います。Google Play 用アイコンと Android ランチャー用の保守的な候補を作れます。ただし、1枚の平坦な画像から foreground と background を正確に分離することはできません。
+
+### 画像生成AIで素材を作る場合のヒント
+
+画像生成AIを使う場合は、「完成したアプリアイコンの見本」ではなく、このツールで加工しやすい「アイコン素材」を作るつもりで指示すると失敗しにくくなります。
+
+プロンプトのコツ:
+
+- 正方形キャンバスの中央に主役を置くように指示します。
+- 主役の周囲に十分な余白を残すように指示します。
+- 小さいサイズでも読める、シンプルでコントラストの強い形にします。
+- 小さな文字、複雑な背景、細すぎる線、端に近い影、アプリアイコン風の角丸フレームは避けます。
+- `foreground.png` を作りたい場合は、透明背景にするよう指示します。
+- レイヤー分けできる場合は、背景だけの画像も別に作ります。
+
+1枚 PNG 用のプロンプト例:
+
+```text
+Create a square 1024x1024 app icon source image for a magnifying glass camera app. Center one clear magnifying glass symbol, leave generous padding on all sides, use high contrast, simple shapes, no text, no rounded-corner frame, no drop shadow outside the artwork.
+```
+
+foreground レイヤー用のプロンプト例:
+
+```text
+Create only the foreground symbol for an Android adaptive icon: a centered magnifying glass with a small camera detail, transparent background, simple high-contrast vector-like style, generous padding, no text, no shadow, no background.
+```
+
+background レイヤー用のプロンプト例:
+
+```text
+Create only the background layer for an Android adaptive icon: square 1024x1024, calm blue-green gradient, subtle soft texture, no logo, no text, no border, no rounded corners.
+```
+
+生成後は、このツールを実行する前に画像を目視確認してください。主役が端に近すぎる、小さな文字が読めない、すでに角丸が入っている、といった場合は、プロンプトを直して再生成するか、画像編集ツールで調整してから使います。
+
 ## できること
 
 - `512x512` の Google Play Store 用 PNG を生成します。
@@ -16,22 +69,6 @@ Android Icon Compliance Resizer は、既存のアイコン素材を Android ラ
 - 透明ピクセルを除いた前景 bounds を検出し、重要なピクセルを Android Adaptive Icon の安全領域内に収めます。
 - circle、rounded-square、squircle、square、安全領域オーバーレイのプレビューを生成します。
 - Play アイコン形式、Adaptive Icon XML、参照 drawable、legacy サイズ、manifest 参照、見切れリスクを検証します。
-
-## 含まれるファイル
-
-```text
-android-icon-compliance-resizer/
-├── SKILL.md
-├── requirements.txt
-├── scripts/
-│   ├── pack_android_icons.py
-│   ├── validate_android_icons.py
-│   └── generate_icon_previews.py
-├── references/
-│   └── android_icon_requirements.md
-└── examples/
-    └── README.md
-```
 
 ## 必要なもの
 
@@ -180,26 +217,6 @@ python scripts/pack_android_icons.py \
 
 単一の平坦な PNG からも生成できますが、ロゴと背景を完全には分離できません。その場合、Adaptive Icon の出力は保守的な候補として扱い、リリース前に生成プレビューを必ず目視確認してください。
 
-## GitHub 用説明文
-
-短い説明:
-
-```text
-Android ランチャーアイコンと Google Play Store アイコンをリサイズ、生成、プレビュー、検証する Codex Skill / Python ツールキット。
-```
-
-英語の短い説明:
-
-```text
-Codex Skill and Python toolkit for resizing, packing, previewing, and validating Android launcher icons and Google Play Store icons.
-```
-
-おすすめ topics:
-
-```text
-android, adaptive-icons, launcher-icon, google-play, python, pillow, codex-skill
-```
-
 ## 注意
 
 - Google Play Store 用アイコンと Android ランチャーアイコンは別物です。
@@ -207,3 +224,19 @@ android, adaptive-icons, launcher-icon, google-play, python, pillow, codex-skill
 - Android Adaptive Icon の foreground の重要部分は中央の安全領域内に収める必要があります。
 - 実際のリリース前に、生成されたプレビューを必ず目視確認してください。
 - アプリプロジェクトへ書き込む前に、まず `--dry-run` を使ってください。
+
+## プロジェクト構成
+
+```text
+android-icon-compliance-resizer/
+├── SKILL.md
+├── requirements.txt
+├── scripts/
+│   ├── pack_android_icons.py
+│   ├── validate_android_icons.py
+│   └── generate_icon_previews.py
+├── references/
+│   └── android_icon_requirements.md
+└── examples/
+    └── README.md
+```
